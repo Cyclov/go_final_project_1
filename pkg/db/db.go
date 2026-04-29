@@ -1,14 +1,52 @@
 package db
 
 import (
+	"database/sql"
+	"fmt"
 	"os"
+
+	_ "modernc.org/sqlite"
 )
 
-func getDBPath() string {
-	path, exists := os.LookupEnv("TODO_DBFILE")
-	if exists && path == "" { //Проверили наличие переменной
-		path = "scheduler.db" // Не нашли, вернули значение по умолчанию
+var schema = `CREATE table scheduler (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					date VARCHAR(8) NOT NULL DEFAULT "",
+					title VARCHAR(8) NOT NULL DEFAULT "",
+					comment TEXT NOT NULL DEFAULT "",
+					repeat VARCHAR(8) NOT NULL DEFAULT "" );
+				CREAT INDEX scheduler_date_ind ON scheduler (date);
+				`
+
+var db *sql.DB
+
+func Close() {
+	db.Close()
+}
+
+func Init(dbFile string) error {
+
+	_, err := os.Stat(dbFile)
+
+	var install bool
+
+	if err != nil {
+		install = true
 	}
 
-	return path
+	db, err = sql.Open("sqlite", dbFile)
+
+	if err != nil {
+		return fmt.Errorf("Database open error: %w", err)
+	}
+
+	if install {
+		_, err = db.Exec(schema)
+		if err != nil {
+			return fmt.Errorf("Schema creation error: %w", err)
+		}
+
+	}
+
+	return nil
+
 }
