@@ -8,13 +8,13 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-var schema = `CREATE table scheduler (
+var schema = ` CREATE table scheduler (
 					id INTEGER PRIMARY KEY AUTOINCREMENT,
 					date VARCHAR(8) NOT NULL DEFAULT "",
 					title VARCHAR(8) NOT NULL DEFAULT "",
 					comment TEXT NOT NULL DEFAULT "",
 					repeat VARCHAR(8) NOT NULL DEFAULT "" );
-				CREAT INDEX scheduler_date_ind ON scheduler (date);
+				 CREATE INDEX scheduler_date_ind ON scheduler (date);
 				`
 
 var db *sql.DB
