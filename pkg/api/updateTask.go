@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func addTaskHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	var task db.Task
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
@@ -34,8 +34,10 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	next := ""
+
 	if task.Repeat != "" {
-		_, err := NextDate(now, task.Date, task.Repeat)
+		next, err = NextDate(now, task.Date, task.Repeat)
 		if err != nil {
 			JsonError(w, http.StatusBadRequest, fmt.Sprintf("invalid repeat rule: %v", err))
 			return
@@ -46,7 +48,7 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 		if task.Repeat == "" {
 			task.Date = today
 		} else {
-			next, err := NextDate(now, task.Date, task.Repeat)
+			next, err = NextDate(now, task.Date, task.Repeat)
 			if err != nil {
 				JsonError(w, http.StatusBadRequest, fmt.Sprintf("invalid repeat rule: %v", err))
 				return
@@ -55,22 +57,14 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	id, err := db.AddTask(&task)
+	err = db.UpdateTask(&task, false)
 	if err != nil {
 		JsonError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 
-	type MsgJson struct {
-		Id int64 `json:"id"`
-	}
-
-	msgStr := MsgJson{
-		Id: id,
-	}
-	json.NewEncoder(w).Encode(msgStr)
-
+	WriteJson(w, struct{}{})
 }
