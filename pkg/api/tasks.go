@@ -10,7 +10,9 @@ type TasksResp struct {
 }
 
 func tasksHandler(w http.ResponseWriter, r *http.Request) {
-	tasks, err := db.Tasks(50)
+
+	search := r.FormValue("search")
+	tasks, err := db.Tasks(50, search)
 	if err != nil {
 		JsonError(w, http.StatusInternalServerError, err.Error())
 		return

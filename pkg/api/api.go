@@ -7,12 +7,13 @@ import (
 
 func Init(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/nextdate", nextDayHandler)
-	mux.HandleFunc("GET /api/tasks", tasksHandler)
-	mux.HandleFunc("GET /api/task", taskHandler)
-	mux.HandleFunc("PUT /api/task", taskHandler)
-	mux.HandleFunc("POST /api/task", taskHandler)
-	mux.HandleFunc("DELETE /api/task", taskHandler)
-	mux.HandleFunc("POST /api/task/done", taskDoneHandler)
+	mux.HandleFunc("GET /api/task", auth(taskHandler))
+	mux.HandleFunc("PUT /api/task", auth(taskHandler))
+	mux.HandleFunc("POST /api/task", auth(taskHandler))
+	mux.HandleFunc("DELETE /api/task", auth(taskHandler))
+	mux.HandleFunc("POST /api/task/done", auth(taskDoneHandler))
+	mux.HandleFunc("GET /api/tasks", auth(tasksHandler))
+	mux.HandleFunc("POST /api/signin", singinHandler)
 }
 
 func JsonError(w http.ResponseWriter, status int, msg string) {

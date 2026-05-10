@@ -1,10 +1,30 @@
 package db
 
-func Tasks(limit int) ([]*Task, error) {
+import (
+	"database/sql"
+	"time"
+)
 
-	query := `SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?`
-	//now := time.Now().Format("20060102")
-	resp, err := db.Query(query, limit)
+func Tasks(limit int, search string) ([]*Task, error) {
+
+	var resp *sql.Rows
+	var err error
+	var query string
+
+	if search != "" {
+		if parsed, err := time.Parse("02.01.2006", search); err == nil {
+			searchDate := parsed.Format("20060102")
+			query = `SELECT id, date, title, comment, repeat FROM scheduler WHERE date = ? ORDER BY date LIMIT ?`
+			resp, err = db.Query(query, searchDate, limit)
+		} else {
+			query = `SELECT id, date, title, comment, repeat FROM scheduler WHERE title LIKE ? OR comment LIKE ? ORDER BY date LIMIT ?`
+			resp, err = db.Query(query, "%"+search+"%", "%"+search+"%", limit)
+		}
+
+	} else {
+		query = `SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?`
+		resp, err = db.Query(query, limit)
+	}
 
 	var tasks []*Task
 	tasks = make([]*Task, 0)

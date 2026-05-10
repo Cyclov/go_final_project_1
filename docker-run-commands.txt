@@ -1,0 +1,38 @@
+Команды следует запускать из корня проекта (где лежат Dockerfile и docker-compose.yml).
+
+=== Через Docker ===
+
+Сборка образа:
+
+docker build -t scheduler:latest .
+
+Запуск контейнера (порт 7540, том для БД, те же переменные, что в compose):
+
+docker run -d --name scheduler -p 7540:7540 -e TODO_PORT=7540 -e TODO_DBFILE=/data/scheduler.db -e TODO_PASSWORD="1234567!" -v scheduler-data:/data scheduler:latest
+
+Остановка и удаление:
+
+docker stop scheduler
+docker rm scheduler
+
+=== Через Docker Compose ===
+
+Сборка и запуск в фоне:
+
+docker compose up -d --build
+
+Логи:
+
+docker compose logs -f
+
+Остановка и удаление контейнеров:
+
+docker compose down
+
+Том с данными по умолчанию сохранится; чтобы удалить и том:
+
+docker compose down -v
+
+---
+
+После запуска приложение будет доступно по адресу http://localhost:7540 (если порт не меняли).
