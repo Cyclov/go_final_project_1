@@ -30,14 +30,14 @@ func Tasks(limit int, search string) ([]*Task, error) {
 	tasks = make([]*Task, 0)
 
 	if err != nil {
-		return tasks, err
+		return nil, err
 	}
 	defer resp.Close()
 
 	for resp.Next() {
 		t := &Task{}
 		if err := resp.Scan(&t.ID, &t.Date, &t.Title, &t.Comment, &t.Repeat); err != nil {
-			return tasks, err
+			return nil, err
 		}
 		tasks = append(tasks, t)
 	}

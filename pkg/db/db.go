@@ -44,6 +44,7 @@ func Init(dbFile string) error {
 	if install {
 		_, err = db.Exec(schema)
 		if err != nil {
+			db.Close()
 			return fmt.Errorf("Schema creation error: %w", err)
 		}
 

@@ -175,10 +175,6 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	return date.Format(db.DateFormat), nil
 }
 
-func InitNextDayHandler() {
-	http.HandleFunc("/api/nextdate", nextDayHandler)
-}
-
 func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 	nowStr := r.FormValue("now")
 
