@@ -1,0 +1,9 @@
+{
+    "go.formatTool": "goimports",
+    "gopls": {
+        "formatting.local": "scheduler"
+    },
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    }
+}
