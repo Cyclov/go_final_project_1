@@ -17,6 +17,8 @@ var schema = ` CREATE table scheduler (
 				 CREATE INDEX scheduler_date_ind ON scheduler (date);
 				`
 
+const DateFormat = "20060102"
+
 var db *sql.DB
 
 func Close() {

@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"scheduler/pkg/db"
 	"time"
+
+	"scheduler/pkg/db"
 )
 
 func addTaskHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,13 +23,13 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	now := time.Now()
-	today := now.Format("20060102")
+	today := now.Format(db.DateFormat)
 
 	if task.Date == "" {
 		task.Date = today
 	}
 
-	taskDate, err := time.Parse("20060102", task.Date)
+	taskDate, err := time.Parse(db.DateFormat, task.Date)
 	if err != nil {
 		JsonError(w, http.StatusBadRequest, fmt.Sprintf("invalid date format: %s", task.Date))
 		return
@@ -64,11 +65,9 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 
-	type MsgJson struct {
+	msgStr := struct {
 		Id int64 `json:"id"`
-	}
-
-	msgStr := MsgJson{
+	}{
 		Id: id,
 	}
 	json.NewEncoder(w).Encode(msgStr)

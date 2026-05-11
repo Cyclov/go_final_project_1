@@ -1,5 +1,5 @@
 # Стадия сборки: образ golang собирает статический бинарник под Linux.
-FROM golang:1.26 AS builder
+FROM golang:1.26.2 AS builder
 
 WORKDIR /src
 
@@ -10,8 +10,8 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/scheduler .
 
-# Финальный образ: только Ubuntu, исполняемый файл и каталог web.
-FROM ubuntu:latest
+# Финальный образ: только Alpine, исполняемый файл и каталог web.
+FROM alpine:latest
 
 WORKDIR /app
 

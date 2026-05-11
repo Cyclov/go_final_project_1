@@ -3,8 +3,9 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"scheduler/pkg/db"
 	"time"
+
+	"scheduler/pkg/db"
 )
 
 func taskDoneHandler(w http.ResponseWriter, r *http.Request) {

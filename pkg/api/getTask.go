@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+
 	"scheduler/pkg/db"
 )
 

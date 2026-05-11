@@ -2,8 +2,9 @@ package server
 
 import (
 	"net/http"
-	"scheduler/pkg/api"
 	"time"
+
+	"scheduler/pkg/api"
 )
 
 const webDir = "web"

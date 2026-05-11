@@ -13,7 +13,7 @@ func Tasks(limit int, search string) ([]*Task, error) {
 
 	if search != "" {
 		if parsed, err := time.Parse("02.01.2006", search); err == nil {
-			searchDate := parsed.Format("20060102")
+			searchDate := parsed.Format(DateFormat)
 			query = `SELECT id, date, title, comment, repeat FROM scheduler WHERE date = ? ORDER BY date LIMIT ?`
 			resp, err = db.Query(query, searchDate, limit)
 		} else {
@@ -43,7 +43,7 @@ func Tasks(limit int, search string) ([]*Task, error) {
 	}
 
 	if err := resp.Err(); err != nil {
-		return tasks, err
+		return nil, err
 	}
 
 	return tasks, nil

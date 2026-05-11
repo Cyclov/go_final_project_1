@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+
 func Init(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/nextdate", nextDayHandler)
 	mux.HandleFunc("GET /api/task", auth(taskHandler))
@@ -20,11 +21,9 @@ func JsonError(w http.ResponseWriter, status int, msg string) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 
-	type MsgJson struct {
+	msgStr := struct {
 		Error string `json:"error"`
-	}
-
-	msgStr := MsgJson{
+	}{
 		Error: msg,
 	}
 	json.NewEncoder(w).Encode(msgStr)
@@ -33,5 +32,10 @@ func JsonError(w http.ResponseWriter, status int, msg string) {
 
 func WriteJson(w http.ResponseWriter, v any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	json.NewEncoder(w).Encode(v)
+	err := json.NewEncoder(w).Encode(v)
+
+	if err != nil {
+		JsonError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 }

@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"scheduler/pkg/db"
 )
 
 func NextDate(now time.Time, dstart string, repeat string) (string, error) {
@@ -17,7 +19,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 	repeatType := repeatRule[0]
 
-	date, err := time.Parse("20060102", dstart)
+	date, err := time.Parse(db.DateFormat, dstart)
 	if err != nil {
 		return "", fmt.Errorf("invalid date format %q: %w", dstart, err)
 	}
@@ -65,7 +67,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 		for {
 			if date.After(now) && weekdayNums[currentweekday(date)] {
-				return date.Format("20060102"), nil
+				return date.Format(db.DateFormat), nil
 			}
 			date = date.AddDate(0, 0, 1)
 		}
@@ -152,7 +154,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 					}
 				}
 				if best != nil {
-					return best.Format("20060102"), nil
+					return best.Format(db.DateFormat), nil
 				}
 			}
 			currentMonth = currentMonth.AddDate(0, 1, 0)
@@ -170,7 +172,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 		}
 	}
 
-	return date.Format("20060102"), nil
+	return date.Format(db.DateFormat), nil
 }
 
 func InitNextDayHandler() {
@@ -187,7 +189,7 @@ func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 		now = time.Now()
 	} else {
 
-		now, err = time.Parse("20060102", nowStr)
+		now, err = time.Parse(db.DateFormat, nowStr)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("invalid 'now' date: %v", err), http.StatusBadRequest)
 			return
